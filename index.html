@@ -3,135 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech AI | Line Art Converter</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+    <title>TECH AI | Image Engineer Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --neon: #00f2ff;
-            --bg: #0a0a0a;
+            --neon-cyan: #00f2ff;
+            --dark-bg: #0d0d0d;
+            --card-bg: #1a1a1a;
+            --text-gray: #b3b3b3;
         }
+
         body {
-            background-color: var(--bg);
+            margin: 0;
+            background-color: var(--dark-bg);
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        header {
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--neon-cyan);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+        }
+
+        /* Main Chat Area */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
             padding: 20px;
-        }
-        .container {
-            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
             width: 100%;
-            background: rgba(255,255,255,0.05);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid var(--neon);
-            box-shadow: 0 0 20px var(--neon);
-            text-align: center;
         }
-        h1 { color: var(--neon); text-transform: uppercase; letter-spacing: 2px; }
-        .upload-box {
-            border: 2px dashed var(--neon);
-            padding: 40px;
+
+        .message {
+            max-width: 80%;
+            padding: 15px;
             border-radius: 15px;
-            margin: 20px 0;
-            cursor: pointer;
-            transition: 0.3s;
+            line-height: 1.6;
         }
-        .upload-box:hover { background: rgba(0, 242, 255, 0.1); }
-        #canvas {
-            max-width: 100%;
-            height: auto;
+
+        .ai-msg {
+            align-self: flex-start;
+            background: var(--card-bg);
+            border-right: 4px solid var(--neon-cyan);
+        }
+
+        .result-image {
+            width: 100%;
             border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-            background: white;
+            margin-top: 10px;
+            border: 1px solid #333;
         }
-        .btn {
-            background: var(--neon);
+
+        /* Input Area */
+        .input-wrapper {
+            background: #111;
+            padding: 20px;
+            border-top: 1px solid #222;
+        }
+
+        .input-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #prompt-input {
+            flex: 1;
+            background: #222;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        #prompt-input:focus {
+            border-color: var(--neon-cyan);
+        }
+
+        .btn-action {
+            background: var(--neon-cyan);
             color: black;
-            padding: 12px 30px;
             border: none;
-            border-radius: 50px;
+            padding: 15px 25px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
             transition: 0.3s;
         }
-        .btn:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon); }
-        #loader { display: none; margin: 10px; color: var(--neon); }
+
+        .btn-upload {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Loading Animation */
+        .loader {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--neon-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Tech AI Line Art</h1>
-        <p>وێنەیێ خۆ بارکە دا ببیتە Line Art (بۆ ڕەنگکرنێ)</p>
-        
-        <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--neon);"></i>
-            <p>لێرە کلیک بکە بۆ هەلبژارتنا وێنەی</p>
-            <input type="file" id="fileInput" hidden accept="image/*">
-        </div>
+    <header>
+        <div class="logo">TECH AI STUDIO</div>
+        <div style="font-size: 0.8rem; color: var(--text-gray);">Image Engineer Mode</div>
+    </header>
 
-        <div id="loader">پرۆسێس دهێتە کرن... چەڤەڕێ بە</div>
-        <canvas id="canvas"></canvas>
-        <br>
-        <button id="downloadBtn" class="btn" style="display: none;">داگرتنا وێنەی (Download)</button>
+    <div class="chat-container" id="chatBox">
+        <!-- دەستپێکا چاتی -->
+        <div class="message ai-msg">
+            بخێر بێی فەلاح! وێنەیەکێ بارکە و پڕۆمپتێ خۆ بنڤیسە دا ئەز ب زیرەکیا دەستکرد بۆ تە بگوھۆڕم.
+        </div>
+    </div>
+
+    <div class="input-wrapper">
+        <div class="input-container">
+            <!-- پیشاندانا وێنەیێ هاتیە هەلبژارتن -->
+            <div id="file-name" style="font-size: 0.8rem; color: var(--neon-cyan);"></div>
+            
+            <div class="controls">
+                <label class="btn-upload" title="Upload Image">
+                    <i class="fas fa-image"></i>
+                    <input type="file" id="imageInput" hidden accept="image/*">
+                </label>
+                
+                <input type="text" id="prompt-input" placeholder="پڕۆمپتێ خۆ لێرە بنڤیسە (بۆ نموونە: Line art style...)">
+                
+                <button class="btn-action" onclick="generateImage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <center><div class="loader" id="loader"></div></center>
+        </div>
     </div>
 
     <script>
-        const fileInput = document.getElementById('fileInput');
-        const canvas = document.getElementById('canvas');
+        const imageInput = document.getElementById('imageInput');
+        const fileNameDisplay = document.getElementById('file-name');
+        const chatBox = document.getElementById('chatBox');
         const loader = document.getElementById('loader');
-        const downloadBtn = document.getElementById('downloadBtn');
 
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                loader.style.display = 'block';
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0);
-                        
-                        applyLineArt();
-                    }
-                    img.src = e.target.result;
-                }
-                reader.readAsDataURL(file);
+        imageInput.addEventListener('change', function() {
+            if(this.files[0]) {
+                fileNameDisplay.innerText = "وێنە هاتە هەلبژارتن: " + this.files[0].name;
             }
         });
 
-        function applyLineArt() {
-            Caman("#canvas", function () {
-                this.greyscale();
-                this.contrast(50);
-                this.exposure(10);
-                // ئەڤ فلتەرە هەول ددەت هێلان دیار بکەت
-                this.process("threshold", function(val) {
-                    return val > 128 ? 255 : 0;
-                });
-                
-                this.render(function () {
-                    canvas.style.display = 'inline-block';
-                    loader.style.display = 'none';
-                    downloadBtn.style.display = 'inline-block';
-                });
-            });
+        async function generateImage() {
+            const prompt = document.getElementById('prompt-input').value;
+            if(!prompt) {
+                alert("تکایە پڕۆمپتەکێ بنڤیسە!");
+                return;
+            }
+
+            loader.style.display = "block";
+
+            // لێرە تو پێدڤی ب بەشێ (Backend/API) هەی دا کار بکەت
+            // ئەڤە تەنێ لاساییکردنەوەیا (Simulation) کارێ AI یە:
+            setTimeout(() => {
+                const aiResponse = document.createElement('div');
+                aiResponse.className = 'message ai-msg';
+                aiResponse.innerHTML = `
+                    <b>ئەنجامێ دیزاینێ تە:</b><br>
+                    <i>Prompt: ${prompt}</i><br>
+                    <img src="https://via.placeholder.com/600x400/1a1a1a/00f2ff?text=AI+Generated+Image" class="result-image">
+                `;
+                chatBox.appendChild(aiResponse);
+                loader.style.display = "none";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 3000);
         }
-
-        downloadBtn.addEventListener('click', function() {
-            const link = document.createElement('a');
-            link.download = 'tech-ai-lineart.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
     </script>
-
 </body>
 </html>
