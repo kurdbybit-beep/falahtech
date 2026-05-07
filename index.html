@@ -3,108 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech AI | Fidget Spinner Edition</title>
+    <title>Tech AI | Office Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            /* وێنەیێ تە یێ نووی وەک باکگراوند */
-            --bg-image: url('https://i.ibb.co/zVW3ZcBc/image.jpg');
-            --overlay: rgba(0, 10, 20, 0.7);
-            --text-color: #00f2ff;
-            --brand-glow: rgba(0, 242, 255, 0.6);
+            --bg-image: url('https://i.ibb.co/vC2BLwm2/image.jpg');
+            --overlay: rgba(0, 0, 0, 0.5);
+            --brand-glow: rgba(0, 242, 255, 0.8);
         }
 
         [data-theme="light"] {
-            --overlay: rgba(255, 255, 255, 0.2);
-            --text-color: #1a1a1a;
-            --brand-glow: rgba(0, 0, 0, 0.3);
+            --overlay: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            /* لێرە وێنە و ڕەنگ تێکەل دبن */
             background: linear-gradient(var(--overlay), var(--overlay)), var(--bg-image);
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
-            transition: all 0.8s ease-in-out;
         }
 
-        .theme-switch {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            z-index: 100;
-            cursor: pointer;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 1.3rem;
-            transition: 0.4s;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-
-        .welcome-msg {
-            font-size: 2.8rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 60px;
-            color: var(--text-color);
-            text-shadow: 2px 2px 15px var(--brand-glow);
-            z-index: 10;
-            letter-spacing: 3px;
-        }
-
+        /* --- Spinner Container --- */
         .spinner-wrapper {
             position: relative;
-            width: 320px;
-            height: 320px;
+            width: 350px;
+            height: 350px;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
         }
 
+        /* Center Circle with Tech AI */
         .brand-center {
             color: #ffffff;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 900;
             z-index: 30;
-            width: 120px;
-            height: 120px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.4);
+            width: 110px;
+            height: 110px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            border: 3px solid var(--brand-glow);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
-            box-shadow: 0 0 40px var(--brand-glow);
+            box-shadow: 0 0 30px var(--brand-glow);
             position: absolute;
+            text-transform: uppercase;
         }
 
+        /* Rotating Arms (4 Arms) */
         .fidget-blades {
             position: absolute;
             width: 100%;
             height: 100%;
-            animation: fastSpin 6s linear infinite;
+            animation: fastSpin 10s linear infinite;
         }
 
         @keyframes fastSpin {
@@ -117,15 +80,15 @@
             top: 50%;
             left: 50%;
             width: 4px;
-            height: 130px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+            height: 140px; /* Distance of icons */
+            background: linear-gradient(to bottom, var(--brand-glow), transparent);
             transform-origin: top center;
         }
 
         .icon-link {
             position: absolute;
             bottom: -35px;
-            left: -35px;
+            left: -33px;
             width: 70px;
             height: 70px;
             background: white;
@@ -135,9 +98,14 @@
             align-items: center;
             text-decoration: none;
             font-size: 2rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            animation: counterRotate 10s linear infinite;
             transition: 0.3s;
-            animation: counterRotate 6s linear infinite;
+        }
+
+        .icon-link:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px white;
         }
 
         @keyframes counterRotate {
@@ -145,36 +113,34 @@
             to { transform: rotate(-360deg); }
         }
 
+        /* 4 Arms positions */
         .arm-1 { transform: rotate(0deg); }
-        .arm-2 { transform: rotate(120deg); }
-        .arm-3 { transform: rotate(240deg); }
+        .arm-2 { transform: rotate(90deg); }
+        .arm-3 { transform: rotate(180deg); }
+        .arm-4 { transform: rotate(270deg); }
 
         .tiktok { color: #000; }
         .instagram { color: #E1306C; }
         .telegram { color: #0088cc; }
+        .message { color: #25D366; }
 
-        .bottom-msg {
+        /* Theme Switcher */
+        .theme-switch {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(0, 242, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 15px 30px;
-            border-radius: 50px;
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
-            font-weight: bold;
+            top: 20px;
+            right: 20px;
             z-index: 100;
-            transition: 0.3s;
-        }
-
-        .bottom-msg:hover {
-            background: rgba(0, 242, 255, 0.4);
-            transform: scale(1.05);
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
         }
     </style>
 </head>
@@ -184,42 +150,35 @@
         <i id="theme-icon" class="fas fa-moon"></i>
     </div>
 
-    <div class="welcome-msg" id="welcome-text">welcome</div>
-
     <div class="spinner-wrapper">
-        <div class="brand-center">Tech Ai</div>
+        <!-- Center Brand -->
+        <div class="brand-center">Tech AI</div>
 
+        <!-- 4 Rotating Arms -->
         <div class="fidget-blades">
+            <!-- TikTok -->
             <div class="blade-arm arm-1">
                 <a href="https://www.tiktok.com/@_tech_ai_" target="_blank" class="icon-link tiktok"><i class="fab fa-tiktok"></i></a>
             </div>
+            <!-- Instagram -->
             <div class="blade-arm arm-2">
                 <a href="https://www.instagram.com/falahcanadi" target="_blank" class="icon-link instagram"><i class="fab fa-instagram"></i></a>
             </div>
+            <!-- Telegram -->
             <div class="blade-arm arm-3">
                 <a href="https://t.me/tech_ai_falah" target="_blank" class="icon-link telegram"><i class="fab fa-telegram"></i></a>
+            </div>
+            <!-- Message/Contact -->
+            <div class="blade-arm arm-4">
+                <a href="https://t.me/falahzakho" target="_blank" class="icon-link message"><i class="fas fa-comment-dots"></i></a>
             </div>
         </div>
     </div>
 
-    <a href="https://t.me/falahzakho" target="_blank" class="bottom-msg">
-        <i class="fas fa-paper-plane"></i>
-        <span>Contact Me</span>
-    </a>
-
     <script>
-        const welcomeText = document.getElementById('welcome-text');
-        const messages = ["welcome", "بخێر بێی"];
-        let msgIndex = 0;
-        setInterval(() => {
-            msgIndex = (msgIndex + 1) % messages.length;
-            welcomeText.innerText = messages[msgIndex];
-        }, 3000);
-
         function toggleTheme() {
             const body = document.body;
             const icon = document.getElementById('theme-icon');
-            
             if (body.getAttribute('data-theme') === 'dark') {
                 body.setAttribute('data-theme', 'light');
                 icon.className = 'fas fa-sun';
