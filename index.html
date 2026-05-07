@@ -1,64 +1,137 @@
 <!DOCTYPE html>
-<html lang="ku">
+<html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Tech AI | Image to Line Art</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech AI | Line Art Converter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; padding: 50px; }
-        .container { max-width: 600px; margin: auto; background: #222; padding: 20px; border-radius: 15px; border: 2px solid #00f2ff; }
-        #canvas { max-width: 100%; margin-top: 20px; border-radius: 10px; display: none; }
-        input { margin: 20px 0; }
-        .btn { background: #00f2ff; color: black; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        :root {
+            --neon: #00f2ff;
+            --bg: #0a0a0a;
+        }
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--neon);
+            box-shadow: 0 0 20px var(--neon);
+            text-align: center;
+        }
+        h1 { color: var(--neon); text-transform: uppercase; letter-spacing: 2px; }
+        .upload-box {
+            border: 2px dashed var(--neon);
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .upload-box:hover { background: rgba(0, 242, 255, 0.1); }
+        #canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            background: white;
+        }
+        .btn {
+            background: var(--neon);
+            color: black;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon); }
+        #loader { display: none; margin: 10px; color: var(--neon); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>گۆهۆڕینا وێنەی بۆ Line Art</h2>
-    <input type="file" id="upload" accept="image/*">
-    <br>
-    <canvas id="canvas"></canvas>
-</div>
-
-<script>
-    const upload = document.getElementById('upload');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-
-    upload.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
+    <div class="container">
+        <h1>Tech AI Line Art</h1>
+        <p>وێنەیێ خۆ بارکە دا ببیتە Line Art (بۆ ڕەنگکرنێ)</p>
         
-        reader.onload = (event) => {
-            const img = new Image();
-            img.onload = () => {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                canvas.style.display = 'block';
-                
-                // کێشانا وێنەی
-                ctx.drawImage(img, 0, 0);
-                
-                // لێرە فلتەرێ Line Art جێبەجێ دکەین
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-                
-                // مەنتیقێ سادە بۆ هێلان (Edge Detection)
-                for (let i = 0; i < data.length; i += 4) {
-                    let avg = (data[i] + data[i+1] + data[i+2]) / 3;
-                    // ئەگەر ڕەنگ یێ نێزیکی سپی بیت، ب تمامى سپی بکە، ئەگەر تاریک بیت ڕەش بکە
-                    let color = avg > 120 ? 255 : 0; 
-                    data[i] = data[i+1] = data[i+2] = color;
+        <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--neon);"></i>
+            <p>لێرە کلیک بکە بۆ هەلبژارتنا وێنەی</p>
+            <input type="file" id="fileInput" hidden accept="image/*">
+        </div>
+
+        <div id="loader">پرۆسێس دهێتە کرن... چەڤەڕێ بە</div>
+        <canvas id="canvas"></canvas>
+        <br>
+        <button id="downloadBtn" class="btn" style="display: none;">داگرتنا وێنەی (Download)</button>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const canvas = document.getElementById('canvas');
+        const loader = document.getElementById('loader');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                loader.style.display = 'block';
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        
+                        applyLineArt();
+                    }
+                    img.src = e.target.result;
                 }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function applyLineArt() {
+            Caman("#canvas", function () {
+                this.greyscale();
+                this.contrast(50);
+                this.exposure(10);
+                // ئەڤ فلتەرە هەول ددەت هێلان دیار بکەت
+                this.process("threshold", function(val) {
+                    return val > 128 ? 255 : 0;
+                });
                 
-                ctx.putImageData(imageData, 0, 0);
-                // تێبینی: ئەڤە فلتەرەکێ زۆر سادەیە، بۆ کارەکێ پیشەیی پێدڤی ب OpenCV هەیە
-            };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-    });
-</script>
+                this.render(function () {
+                    canvas.style.display = 'inline-block';
+                    loader.style.display = 'none';
+                    downloadBtn.style.display = 'inline-block';
+                });
+            });
+        }
+
+        downloadBtn.addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.download = 'tech-ai-lineart.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    </script>
 
 </body>
 </html>
