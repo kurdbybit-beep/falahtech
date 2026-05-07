@@ -2,165 +2,63 @@
 <html lang="ku">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech AI | Falah Edition</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>Tech AI | Image to Line Art</title>
     <style>
-        :root {
-            --bg-image: url('https://i.ibb.co/vC2BLwm2/image.jpg');
-            --brand-glow: rgba(0, 242, 255, 0.9);
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            /* باکگراوندێ گشتی کێمەکێ تاریک کر دا سەنتەر جوان دیار بیت */
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--bg-image);
-            background-size: cover;
-            background-position: center;
-            font-family: 'Poppins', sans-serif;
-            overflow: hidden;
-        }
-
-        .spinner-wrapper {
-            position: relative;
-            width: 380px;
-            height: 380px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* لێرە وێنەیێ تە دکەڤیتە د ناڤ سەنتەری دا */
-        .brand-center {
-            z-index: 30;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 4px solid var(--brand-glow);
-            box-shadow: 0 0 30px var(--brand-glow);
-            position: absolute;
-            overflow: hidden; /* دا وێنە ژ بازنەیێ دەرنەکەڤیت */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* وێنەیێ تە د ناڤ بازنەیێ دا */
-        .brand-center img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* وێنەی ب جوانترین شێوە دگونجینیت */
-        }
-
-        /* ناڤێ Tech AI ل سەر وێنەی */
-        .brand-name-overlay {
-            position: absolute;
-            bottom: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            width: 100%;
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: bold;
-            padding: 5px 0;
-            backdrop-filter: blur(5px);
-        }
-
-        /* سپینەرا ٤ پەرە */
-        .fidget-blades {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            animation: fastSpin 12s linear infinite;
-        }
-
-        @keyframes fastSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .blade-arm {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 3px;
-            height: 155px; /* درێژیا قۆلێن ئایکۆنان */
-            background: linear-gradient(to bottom, var(--brand-glow), transparent);
-            transform-origin: top center;
-        }
-
-        .icon-link {
-            position: absolute;
-            bottom: -35px;
-            left: -33px;
-            width: 70px;
-            height: 70px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            font-size: 2rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            animation: counterRotate 12s linear infinite;
-            transition: 0.3s;
-        }
-
-        .icon-link:hover {
-            transform: scale(1.1);
-            background: var(--brand-glow);
-            color: white !important;
-        }
-
-        @keyframes counterRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(-360deg); }
-        }
-
-        .arm-1 { transform: rotate(0deg); }
-        .arm-2 { transform: rotate(90deg); }
-        .arm-3 { transform: rotate(180deg); }
-        .arm-4 { transform: rotate(270deg); }
-
-        .tiktok { color: #000; }
-        .instagram { color: #E1306C; }
-        .telegram { color: #0088cc; }
-        .message { color: #25D366; }
-
+        body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; padding: 50px; }
+        .container { max-width: 600px; margin: auto; background: #222; padding: 20px; border-radius: 15px; border: 2px solid #00f2ff; }
+        #canvas { max-width: 100%; margin-top: 20px; border-radius: 10px; display: none; }
+        input { margin: 20px 0; }
+        .btn { background: #00f2ff; color: black; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="spinner-wrapper">
-        <!-- ناڤەڕاست: وێنەیێ تە و ناڤێ براندی -->
-        <div class="brand-center">
-            <img src="https://i.ibb.co/vC2BLwm2/image.jpg" alt="Falah Tech AI">
-            <div class="brand-name-overlay">TECH AI</div>
-        </div>
+<div class="container">
+    <h2>گۆهۆڕینا وێنەی بۆ Line Art</h2>
+    <input type="file" id="upload" accept="image/*">
+    <br>
+    <canvas id="canvas"></canvas>
+</div>
 
-        <!-- ٤ پەرێن زڤرۆک ب ئایکۆنان ڤە -->
-        <div class="fidget-blades">
-            <div class="blade-arm arm-1">
-                <a href="https://www.tiktok.com/@_tech_ai_" target="_blank" class="icon-link tiktok"><i class="fab fa-tiktok"></i></a>
-            </div>
-            <div class="blade-arm arm-2">
-                <a href="https://www.instagram.com/falahcanadi" target="_blank" class="icon-link instagram"><i class="fab fa-instagram"></i></a>
-            </div>
-            <div class="blade-arm arm-3">
-                <a href="https://t.me/tech_ai_falah" target="_blank" class="icon-link telegram"><i class="fab fa-telegram"></i></a>
-            </div>
-            <div class="blade-arm arm-4">
-                <a href="https://t.me/falahzakho" target="_blank" class="icon-link message"><i class="fas fa-comment-dots"></i></a>
-            </div>
-        </div>
-    </div>
+<script>
+    const upload = document.getElementById('upload');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    upload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                canvas.style.display = 'block';
+                
+                // کێشانا وێنەی
+                ctx.drawImage(img, 0, 0);
+                
+                // لێرە فلتەرێ Line Art جێبەجێ دکەین
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                // مەنتیقێ سادە بۆ هێلان (Edge Detection)
+                for (let i = 0; i < data.length; i += 4) {
+                    let avg = (data[i] + data[i+1] + data[i+2]) / 3;
+                    // ئەگەر ڕەنگ یێ نێزیکی سپی بیت، ب تمامى سپی بکە، ئەگەر تاریک بیت ڕەش بکە
+                    let color = avg > 120 ? 255 : 0; 
+                    data[i] = data[i+1] = data[i+2] = color;
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                // تێبینی: ئەڤە فلتەرەکێ زۆر سادەیە، بۆ کارەکێ پیشەیی پێدڤی ب OpenCV هەیە
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
 
 </body>
 </html>
